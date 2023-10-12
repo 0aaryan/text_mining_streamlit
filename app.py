@@ -1,7 +1,6 @@
-# Import necessary libraries
 import streamlit as st
 import PyPDF2
-from models.sentiment_analysis import perform_sentiment_analysis
+from models.sentiment_analysis import vader_lexicon, textblob_analysis, bert_analysis
 from models.information_extraction import perform_information_extraction
 
 def extract_text_from_pdf(uploaded_file):
@@ -14,6 +13,7 @@ def extract_text_from_pdf(uploaded_file):
     return None
 
 def main():
+
     st.title("Text Mining Web App")
 
     st.sidebar.header("Select a Text Mining Task")
@@ -36,29 +36,48 @@ def main():
                 else:
                     st.write("Text extraction failed. Please upload a valid PDF file.")
 
-                # Continue with the selected text mining task
-                if task == "Sentiment Analysis":
+            if task == "Sentiment Analysis":
+                st.write("Performing Sentiment Analysis...\n")
 
-                    sentiment = perform_sentiment_analysis(file_text)
-                    if sentiment == "Positive":
-                        st.success("Sentiment: Positive")
-                    elif sentiment == "Negative":
-                        st.error("Sentiment: Negative")
-                    else:
-                        st.warning("Sentiment: Neutral")
+                # Create separate loaders for each sentiment analysis method
+                with st.spinner("Performing Sentiment Analysis using VADER Lexicon..."):
+                    vader_sentiment, vader_score = vader_lexicon(file_text)
+
+                with st.spinner("Performing Sentiment Analysis using TextBlob..."):
+                    textblob_sentiment, textblob_score = textblob_analysis(file_text)
+
+                with st.spinner("Performing Sentiment Analysis using Transformers BERT..."):
+                    bert_sentiment, bert_score = bert_analysis(file_text)
+
+                # Display results
+                st.subheader("Sentiment Analysis Results:")
+                result_data = {
+                    "Method": ["VADER Lexicon", "TextBlob", "Transformers BERT"],
+                    "Sentiment": [vader_sentiment, textblob_sentiment, bert_sentiment],
+                    "Score (%)": [f"{vader_score:.2f}%", f"{textblob_score:.2f}%", f"{bert_score:.2f}%"]
+                }
+                result_table = st.table(result_data)
+
+                st.subheader("Sentiment Scores Visualization:")
+                chart_data = {
+                    "Method": ["VADER Lexicon", "TextBlob", "Transformers BERT"],
+                    "Score": [vader_score, textblob_score, bert_score]
+                }
+                st.bar_chart(chart_data, x="Method", y="Score")
+
+                # Determine the best model
+                best_model = max(
+                    ("VADER Lexicon", vader_score),
+                    ("TextBlob", textblob_score),
+                    ("Transformers BERT", bert_score),
+                    key=lambda x: x[1]
+                )
+
+                st.subheader(f"Best Model for Sentiment Analysis: {best_model[0]}")
+
 
                 if task == "Information Extraction":
                     st.write("Performing Information Extraction...")
-
-                    named_entities = perform_information_extraction(file_text)
-
-                    if named_entities:
-                        st.write("Named Entities:")
-                        data = {"Entity": [entity for entity, _ in named_entities], "Label": [label for _, label in named_entities]}
-                        st.table(data)
-                    else:
-                        st.write("No named entities found.")
-
                 elif task == "Text Classification":
                     st.write("Performing Text Classification...")
                 elif task == "Text Clustering":

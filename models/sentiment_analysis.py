@@ -1,13 +1,14 @@
-# sentiment_analysis_model.py
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from textblob import TextBlob
+from transformers import pipeline
 
-def perform_sentiment_analysis(text):
+# Method 1: Sentiment analysis using VADER
+def vader_lexicon(text):
     nltk.download("vader_lexicon")
     sid = SentimentIntensityAnalyzer()
     sentiment_scores = sid.polarity_scores(text)
 
-    # Determine sentiment label based on the compound score
     if sentiment_scores["compound"] >= 0.05:
         sentiment = "Positive"
     elif sentiment_scores["compound"] <= -0.05:
@@ -15,10 +16,28 @@ def perform_sentiment_analysis(text):
     else:
         sentiment = "Neutral"
 
-    return sentiment
+    return sentiment, sentiment_scores["compound"] * 100
 
-# Example usage
-if __name__ == "__main__":
-    text = "This is a very good example of sentiment analysis."
-    sentiment = perform_sentiment_analysis(text)
-    print("Sentiment:", sentiment)
+# Method 2: Sentiment analysis using TextBlob
+def textblob_analysis(text):
+    analysis = TextBlob(text)
+    polarity = analysis.sentiment.polarity
+
+    if polarity > 0:
+        sentiment = "Positive"
+        percent = polarity * 100
+    elif polarity < 0:
+        sentiment = "Negative"
+        percent = abs(polarity) * 100
+    else:
+        sentiment = "Neutral"
+        percent = 100
+
+    return sentiment, percent
+
+# Method 3: Sentiment analysis using Transformers (BERT)
+def bert_analysis(text):
+    sentiment_analyzer = pipeline("sentiment-analysis")
+    results = sentiment_analyzer(text)
+
+    return results[0]["label"], results[0]["score"] * 100

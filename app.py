@@ -72,7 +72,7 @@ def main():
                     key=lambda x: x[1]
                 )
 
-                st.subheader(f"Best Model for Sentiment Analysis: {best_model[0]}")
+                st.success(f"Best Model for Sentiment Analysis: {best_model[0]}")
 
 
                 if task == "Information Extraction":

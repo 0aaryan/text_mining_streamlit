@@ -14,6 +14,7 @@ def extract_text_from_pdf(uploaded_file):
 def main():
 
     st.title("Text Mining Web App")
+    st.write("An app for text mining tasks including sentiment analysis, information extraction, text classification, and text clustering.")
 
     st.sidebar.header("Select a Text Mining Task")
 

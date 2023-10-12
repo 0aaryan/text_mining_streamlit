@@ -1,7 +1,6 @@
 import streamlit as st
 import PyPDF2
 from models.sentiment_analysis import vader_lexicon, textblob_analysis, bert_analysis
-from models.information_extraction import perform_information_extraction
 
 def extract_text_from_pdf(uploaded_file):
     if uploaded_file is not None:

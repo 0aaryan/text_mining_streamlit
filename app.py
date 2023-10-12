@@ -18,7 +18,7 @@ def main():
 
     st.sidebar.header("Select a Text Mining Task")
 
-    task = st.sidebar.selectbox("Select a Text Mining Task", ("Text Extraction", "Sentiment Analysis", "Information Extraction", "Text Classification", "Text Clustering"))
+    task = st.sidebar.selectbox("Select a Text Mining Task", ("Sentiment Analysis", "Information Extraction", "Text Classification", "Text Clustering"))
 
     uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
 

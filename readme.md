@@ -40,7 +40,7 @@ A web application for performing various text mining tasks on uploaded PDF files
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/your-username/text-mining-web-app.git
+   git clone git@github.com:0aaryan/text_mining_streamlit.git
    ```
 
 2. Navigate to the project directory:
